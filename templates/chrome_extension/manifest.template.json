@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Job applicant",
+  "version": "1.0",
+  "description": "Actions or toolbox",
+  "action": {
+    "default_popup": "main.html"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "host_permissions": []
+}
