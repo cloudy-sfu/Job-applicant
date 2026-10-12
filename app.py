@@ -8,7 +8,7 @@ from threading import Lock, Thread
 import selenium.common as common
 import selenium.webdriver as webdriver
 
-from database import g, get_db
+from database import g, connect
 from endpoints import app
 
 
@@ -50,10 +50,10 @@ with open(ext_fp / "manifest.json", "w") as f:
 # Initialize database
 create_schema_fp = Path("sqls/create_schema.sql").resolve()
 with app.app_context():
-    db = get_db()
-    with db:
+    c = connect()
+    with c:
         for statement in create_schema_fp.read_text().split(';'):
-            db.execute(statement)
+            c.execute(statement)
 
 # Launch Flask application
 # daemon=True -> Python process will exit when the browser is closed
@@ -91,4 +91,5 @@ while 1:
         break
     else:
         time.sleep(1)
-driver.quit()
+with thread_lock:
+    driver.quit()

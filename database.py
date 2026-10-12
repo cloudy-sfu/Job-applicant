@@ -4,10 +4,10 @@ from pathlib import Path
 from flask import g
 
 config_db = Path("raw/config.db").resolve()
-insert_config_table_fp = Path("sqls/insert_config_table.sql").resolve()
+insert_config_fp = Path("sqls/insert_config.sql").resolve()
 
 
-def get_db():
+def connect():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(config_db)
@@ -15,9 +15,9 @@ def get_db():
 
 
 def get_config(key):
-    db = get_db()
-    with db:
-        row = db.execute(
+    c = connect()
+    with c:
+        row = c.execute(
             "SELECT value FROM config WHERE key = :key",
             {"key": key}
         ).fetchone()
@@ -28,18 +28,18 @@ def get_config(key):
 
 
 def set_config(key, value):
-    db = get_db()
-    with db:
-        db.execute(
-            insert_config_table_fp.read_text(),
+    c = connect()
+    with c:
+        c.execute(
+            insert_config_fp.read_text(),
             {"key": key, "value": value}
         )
 
 
 def unset_config(key):
-    db = get_db()
-    with db:
-        db.execute(
+    c = connect()
+    with c:
+        c.execute(
             "DELETE FROM config WHERE key = :key",
             {"key": key}
         )
