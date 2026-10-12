@@ -40,17 +40,12 @@ def add_linkedin_profile():
             try:
                 current_url = driver.current_url
             except NoSuchWindowException:
-                if len(driver.window_handles) == 1:
-                    driver.switch_to.window(driver.window_handles[0])
-                    current_url = driver.current_url
-                else:
-                    return {
-                        "error_code": 1,
-                        "error": "Cannot parse current profile. Potential reason: you "
-                                 "used \"Restore pages\" in the current window. Please "
-                                 "close the browser, wait 2 seconds, and start the "
-                                 "program again."
-                    }
+                return {
+                    "error_code": 1,
+                    "error": "Cannot parse current profile. Potential reason: you used "
+                             "\"Restore pages\" in the current window. Please close the "
+                             "browser, wait 2 seconds, and start the program again."
+                }
         profile_id_match = re.search(r"in/(.+?)(?:[/?]|$)", current_url)
         if not profile_id_match:
             return {

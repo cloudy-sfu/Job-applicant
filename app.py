@@ -60,7 +60,7 @@ with app.app_context():
 flask_thread = Thread(target=app.run, kwargs={"port": port}, daemon=True)
 flask_thread.start()
 
-# Launch selenium
+# Define browser options
 options = webdriver.chrome.options.Options()
 options.enable_bidi = True
 options.add_argument("--remote-debugging-pipe")
@@ -70,6 +70,13 @@ options.add_experimental_option("excludeSwitches", ["enable-automation"])
 # Create browser profile
 selenium_fp = Path("raw/selenium_user_data").resolve()
 options.add_argument(f"--user-data-dir={selenium_fp}")
+# Ban "Restore pages"
+options.add_experimental_option("prefs", {
+    "profile.exit_type": "Normal",
+    "profile.exited_cleanly": True,
+})
+
+# Create browser instance
 driver = webdriver.Chrome(options=options)
 # Install "Job applicant" extension
 thread_lock = Lock()
