@@ -66,12 +66,6 @@ def add_linkedin_profile():
     client = LinkdAPI(api_key=linkdapi_key)
     profile = client.get_full_profile(username=profile_id)['data']
 
-    # Add school's country
-    search_engine = SearchUniversity()
-    for education in profile['educations']:
-        school_info = search_engine.search_university(education['schoolName'])
-        education['country'] = school_info.get("country", "")
-
     # Aggregate roles of the same company
     companies = {}
     for position in profile['fullPositions']:
