@@ -1,27 +1,23 @@
 import os
 
-import dotenv
-from flask import Flask, render_template, request, redirect
+from flask import Flask, request
+
+from database import set_config, unset_config, get_config
 
 app = Flask(__name__)
-dotenv.load_dotenv()
+os.makedirs("raw", exist_ok=True)
 
 
 @app.route('/set_linkdapi_key', methods=['POST'])
 def set_linkdapi_key():
-    config = dotenv.find_dotenv()
     linkdapi_key = request.form.get('linkdapi_key')
     if linkdapi_key:
-        dotenv.set_key(config, "LINKDAPI_KEY", linkdapi_key)
-        os.environ["LINKDAPI_KEY"] = linkdapi_key
+        set_config("LINKDAPI_KEY", linkdapi_key)
     else:
-        dotenv.unset_key(config, "LINKDAPI_KEY")
-        if "LINKDAPI_KEY" in os.environ.keys():
-            del os.environ["LINKDAPI_KEY"]
+        unset_config("LINKDAPI_KEY")
     return ''
 
 
 @app.route('/get_linkdapi_key')
 def get_linkdapi_key():
-    linkdapi_key = os.environ.get("LINKDAPI_KEY", default="")
-    return linkdapi_key
+    return get_config("LINKDAPI_KEY")
