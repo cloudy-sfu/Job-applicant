@@ -31,19 +31,20 @@ function clear_message() {
 closeButton.addEventListener('click', clear_message);
 // Error message banner END
 
-function set_linkdapi_key (linkdapi_key) {
-    const field = document.getElementById('linkdapi_key');
-    field.setAttribute('value', linkdapi_key);
-}
-
+// Initially filled values
+const linkdapi_key = document.getElementById('linkdapi_key');
 $.ajax({
     type: 'GET',
-    url: `http://127.0.0.1:${flask_port}/get_linkdapi_key`,
+    url: `http://127.0.0.1:${flask_port}/init_vars`,
     timeout: 10000,
-    success: (response) => set_linkdapi_key(response),
-    error: () => show_message('danger', 'Fail to get Linkdapi key.')
-})
+    success: (response) => {
+        linkdapi_key.setAttribute('value', response.linkdapi_key);
+    },
+    error: () => show_message('danger', 'Fail to initialize the ' +
+        'extension.')
+});
 
+// Forms
 $('#linkdapi-form').submit(function (event) {
     event.preventDefault();
     const form = $(this);
@@ -53,9 +54,32 @@ $('#linkdapi-form').submit(function (event) {
         timeout: 10000,
         data: form.serialize(), // Serialize the form data
         success: (response) => {
-            show_message('success', 'Linkdapi key updated.');
-            set_linkdapi_key(response.responseText);
+            if (response.error_code === 0) {
+                show_message('success', 'Renidly API key updated.');
+            } else {
+                show_message('danger', response.error);
+            }
         },
-        error: () => show_message('danger', 'Fail to set Linkdapi key.')
+        error: () => show_message('danger', 'Fail to set Renidly API key.')
     });
 })
+
+$('#linkedin-form').submit(function (event) {
+    event.preventDefault();
+    const form = $(this);
+    $.ajax({
+        type: 'POST',
+        url: `http://127.0.0.1:${flask_port}/add_linkedin_profile`,
+        timeout: 10000,
+        data: form.serialize(), // Serialize the form data
+        success: (response) => {
+            if (response.error_code === 0) {
+                show_message('success', 'Added profile.');
+            }
+            else {
+                show_message('danger', response.error);
+            }
+        },
+        error: () => show_message('danger', 'Fail to add LinkedIn profile.')
+    });
+});

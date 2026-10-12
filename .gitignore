@@ -180,6 +180,6 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-templates/chrome_extension/manifest.json
-templates/chrome_extension/flask_port.js
+chrome_extension/manifest.json
+chrome_extension/flask_port.js
 raw

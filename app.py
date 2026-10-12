@@ -3,7 +3,7 @@ import os
 import socket
 import time
 from pathlib import Path
-from threading import Thread
+from threading import Lock, Thread
 
 import selenium.common as common
 import selenium.webdriver as webdriver
@@ -37,7 +37,7 @@ os.makedirs("raw/selenium_user_data", exist_ok=True)
 port = find_available_port(1024, 65536)
 
 # Write port to manifest.json of Chrome extension
-ext_fp = Path("templates/chrome_extension").resolve()
+ext_fp = Path("chrome_extension").resolve()
 with open(ext_fp / "manifest.template.json", "r") as f:
     manifest = json.load(f)
 manifest["host_permissions"].append(f"http://127.0.0.1:{port}/*")
@@ -48,18 +48,19 @@ with open(ext_fp / "manifest.json", "w") as f:
 )
 
 # Initialize database
-create_config_table_fp = Path("sqls/create_config_table.sql").resolve()
+create_schema_fp = Path("sqls/create_schema.sql").resolve()
 with app.app_context():
     db = get_db()
     with db:
-        db.execute(create_config_table_fp.read_text())
+        for statement in create_schema_fp.read_text().split(';'):
+            db.execute(statement)
 
 # Launch Flask application
 # daemon=True -> Python process will exit when the browser is closed
 flask_thread = Thread(target=app.run, kwargs={"port": port}, daemon=True)
 flask_thread.start()
 
-# Launch selenium & install "Job applicant" extension
+# Launch selenium
 options = webdriver.chrome.options.Options()
 options.enable_bidi = True
 options.add_argument("--remote-debugging-pipe")
@@ -70,13 +71,21 @@ options.add_experimental_option("excludeSwitches", ["enable-automation"])
 selenium_fp = Path("raw/selenium_user_data").resolve()
 options.add_argument(f"--user-data-dir={selenium_fp}")
 driver = webdriver.Chrome(options=options)
-driver.webextension.install(path=str(ext_fp))
-driver.get("chrome://new-tab-page/")
+# Install "Job applicant" extension
+thread_lock = Lock()
+with thread_lock:
+    driver.webextension.install(path=str(ext_fp))
+    driver.get("chrome://new-tab-page/")
+    app.extensions["selenium_browser"] = {
+        "driver": driver,
+        "lock": thread_lock,
+    }
 
 # Exit when the user closes the browser
 while 1:
     try:
-        assert driver.window_handles
+        with thread_lock:
+            assert driver.window_handles
     except (AssertionError, common.exceptions.WebDriverException,
             common.exceptions.NoSuchWindowException, ):
         break

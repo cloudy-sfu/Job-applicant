@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Boostrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe"
+          crossorigin="anonymous">
+    <script type="module" src="bootstrap.bundle.js"></script>
+    <script type="module" src="jquery-4.0.0.js"></script>
+    <!-- Bootstrap END -->
+    <title>Job applicant</title>
+    <style>
+        html, body {
+            font-size: 16px;
+            height: 600px; /* Chrome extension maximum */
+            width: 800px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row p-4">
+        <div class="col">
+            <div id="error-alert"
+                 class="alert theme-warning alert-dismissible d-none d-flex
+                 justify-content-between"
+                 role="alert">
+                <p id="error-message"></p>
+                <button id="error-close" type="button" class="btn-close"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="row p-4 pt-0">
+        <div class="col d-flex align-items-start gap-8">
+            <div class="nav nav-pills nav-pills-vertical" id="v-pills-tab" role="tablist"
+                 aria-orientation="vertical">
+                <button class="nav-link" id="v-pills-linkdapi-tab" data-bs-toggle="tab"
+                        data-bs-target="#v-pills-linkdapi" type="button" role="tab"
+                        aria-controls="v-pills-linkdapi" aria-selected="false">
+                    Renidly API
+                </button>
+                <button class="nav-link" id="v-pills-linkedin-tab" data-bs-toggle="tab"
+                        data-bs-target="#v-pills-linkedin" type="button" role="tab"
+                        aria-controls="v-pills-linkedin" aria-selected="false">
+                    LinkedIn
+                </button>
+            </div>
+            <div class="tab-content w-100" id="v-pills-tabContent">
+                <div class="tab-pane" id="v-pills-linkdapi" role="tabpanel"
+                     aria-labelledby="v-pills-linkdapi-tab" tabindex="0">
+                    <p>
+                        Visit
+                        <a href="https://renidly.com/pricing" target="_blank"
+                           class="text-decoration-none">
+                            Renidly
+                        </a>,
+                        create an account, and provide your API key.
+                    </p>
+                    <form id="linkdapi-form" class="form" method="post">
+                        <label for="linkdapi_key">API Key</label>
+                        <input type="password" id="linkdapi_key" name="linkdapi_key"
+                               class="form-control">
+                        <div class="text-center my-4">
+                            <button class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane" id="v-pills-linkedin" role="tabpanel"
+                     aria-labelledby="v-pills-linkedin-tab" tabindex="0">
+                    <p>Create a resume from your LinkedIn profile.</p>
+                    <form id="linkedin-form" class="form" method="post">
+                        <div class="form-field">
+                            <div class="switch">
+                                <input type="checkbox" role="switch"
+                                       id="use_current_linkedin_profile"
+                                       name="use_current_linkedin_profile">
+                            </div>
+                            <label for="use_current_linkedin_profile">Use current profile</label>
+                        </div>
+                        <div class="alert theme-secondary mt-4" role="alert">
+                            If you're in the feed page, we cannot get your profile ID.
+                            Please click your name in left column, which leads to the profile
+                            page.
+                        </div>
+                        <div class="hstack gap-4 my-4">
+                            <hr class="flex-grow-1 my-4"> OR <hr class="flex-grow-1 my-4">
+                        </div>
+                        <p>Use another profile:</p>
+                        <label for="linkedin_profile">Profile ID</label>
+                        <input type="text" name="linkedin_profile" class="form-control"
+                               id="linkedin_profile"
+                        />
+                        <div class="alert theme-secondary mt-4" role="alert">
+                            <p>
+                                For example, Microsoft CEO's LinkedIn profile URL is
+                                <code>https://www.linkedin.com/in/satyanadella/</code>
+                                so his profile ID is <code>satyanadella</code>
+                            </p>
+                        </div>
+                        <div class="text-center my-4">
+                            <button class="btn btn-primary">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
